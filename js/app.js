@@ -52,7 +52,6 @@ const scrollUpBtn = document.querySelector('#scroll__up__btn');
 
 //-------------------------------------------------------------------------
 /* fist function to call populaut the object with the page elements --> holding the header, sections and footer as sub objects.*/
-
 function startBuildNav(){
   // create the header or home attr- link
   header.setAttribute("id","hero");
@@ -78,7 +77,7 @@ function startBuildNav(){
       // add the item to the mani obj
       headerSectionsFooter[tagName + ind] = {id: item.getAttribute("id"),
                                             name: (item.getAttribute("name"))};
-    })
+    });
     // create the footer attr- link
     footer.setAttribute("id","footer");
     footer.setAttribute("name","footer");
@@ -89,14 +88,13 @@ function startBuildNav(){
   }
   (headerSectionsFooter !== null || headerSectionsFooter !== "undefind")
   ? creatLiItem(headerSectionsFooter)
-  : console.log('the headerSectionsFooter object is empty or undefind') 
-  return;
-}// end of startBuildNav
+  : console.log('the headerSectionsFooter object is empty or undefind');
+}
 
 //-------------------------------------------------------------------------
 // createLiItem generate the li element and invoke a element with specified atter 
 function creatLiItem(listObj){
-  // iterat over the object entries to handel each sub object
+  // iterat over the object keys to handel each sub object
   Object.keys(listObj).forEach(key=>{
     // create link element
     const liEle = document.createElement("li")
@@ -130,14 +128,14 @@ function creatLiItem(listObj){
 }// end of createLiItem
 
 //-----------------------------------------------------------------
-// firing the menu items
+// firing the menu items with an object holding all the page info
 function fireMenuItems(listObj){
   Object.keys(listObj).forEach(key=>{
     const liEle = listObj[key]["elements"]["li"];
     const aEle = listObj[key]["elements"]["a"]
     liEle.prepend(aEle);
     navUl.appendChild(liEle);
-  })
+  });
 }// end of firing the menu
 
 //----------------------------------------------------------------
@@ -162,10 +160,11 @@ function removeActiveClass(targetAttr){
       document.getElementById(aEle.getAttribute("href")).classList.remove("active");
     }
   })
+  // handel of the state of the scrollUpBtn
   if(targetAttr !== "hero"){
-    scrollUpBtn.style.cssText = "animation-direction: alternate;"
+    scrollUpBtn.style.cssText = "animation-direction: alternate; animation-play-state: running;"
   }else{
-    scrollUpBtn.style.cssText = "animation-direction: alternate-reverse;"
+    scrollUpBtn.style.cssText = "animation-direction: alternate-reverse; animation-play-state: paused;"
   }
 }// end of removeActiveClass
 
@@ -176,7 +175,7 @@ if(window.innerWidth <= 600){
 }// end if
 
 //-------------------------------------------------------------
-// add window resize event listener
+// add window resize event listener control the menu style when resizing the window
 window.addEventListener("resize",toggleMenu);
 
 //---------------------------------------------------------------
@@ -212,27 +211,25 @@ function hideMenu(){
 **/
 //scroll to the top of the page
 scrollUpBtn.addEventListener("click",()=>{
-  // gwtting the aLink from the main object and pass it to the scrollForce
+  // getting the aLink for the header from the main object and pass it to the scrollForce
   scrollForce(headerSectionsFooter["header"]["elements"]["a"]);
-  if(window.scrollY < 300){
-
-  }
 });
-// adding scroll event to the document
+
+//---------------------------------------------------------------------
+// adding scroll event to the document to add active class to the menu item for the showing section
 document.addEventListener("scroll",followScrolling);
 
 // followScrolling function handel the position of each section in the document
 function followScrolling(){
   const winHeight = window.innerHeight;
-  // getting the footer hright to specify the bottom of the dead area
+  // getting the footer height to specify the bottom of the dead area
   let deadLine = (winHeight * 0.5).toFixed(0);
   const footerRec = footer.getBoundingClientRect();
   const footerHeight = (footerRec.height).toFixed(0);
   if(footerHeight < deadLine){
-     deadLine = ((footerHeight - winHeight) * -1) + 10;// the 10 will be add to insure that footer will be in the dead area.... 
+    deadLine = ((footerHeight - winHeight) * -1) + 10;// the 10 will be add to insure that footer will be in the dead area.... 
   }
   Object.keys(headerSectionsFooter).forEach(key=>{
-    
     const pageSec = document.getElementById(headerSectionsFooter[key]["id"]);
     const pageSecRec = pageSec.getBoundingClientRect();
     const pagSecTop = (pageSecRec.top).toFixed(0)
